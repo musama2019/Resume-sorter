@@ -4,6 +4,8 @@ import re
 import pandas as pd
 import PyPDF2
 from flask import Flask, request, render_template, redirect, url_for
+from transformers import pipeline
+from langchain_huggingface import HuggingFaceEndpoint
 from langchain_groq import ChatGroq
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -87,7 +89,7 @@ def score_resume_with_hf(resume_text, job_description, rubrics, model_pipeline):
     response = model_pipeline.predict(prompt)  # Update to invoke if necessary
     score_text = response.strip()  # Get the generated text
     scores = {}
-    
+    individiual_scores={}
     try:
         # Regex to capture the score and justification for each criterion
         for criterion, details in rubrics.items():
@@ -104,6 +106,7 @@ def score_resume_with_hf(resume_text, job_description, rubrics, model_pipeline):
                 score = float(match.group(1))
                 # Ensure score is within the defined range
                 score = max(details['min_points'], min(score, details['max_points']))
+                individiual_scores[criterion] = score
                 weighted_score = (score/details['max_points']) * details['weightage'] 
                 scores[criterion] = weighted_score
                 print(f"Score for {criterion}: {score} (Weighted: {weighted_score})")
@@ -120,10 +123,10 @@ def score_resume_with_hf(resume_text, job_description, rubrics, model_pipeline):
     total_score = sum(scores.values())
 
 
-    print("Individual weighted scores:", scores)
+    print("Individual  scores:", individiual_scores)
     print("Normalized Total Score (out of 100):", total_score)
     
-    return total_score
+    return individiual_scores,total_score
 
 
 
@@ -135,8 +138,8 @@ def process_resumes(resume_files, job_description, rubrics, model_pipeline):
         resume_text,email = read_resume(resume_file)
         candidate_name = os.path.basename(resume_file)
         print(f"\nProcessing resume: {candidate_name}")
-        score = score_resume_with_hf(resume_text, job_description, rubrics, model_pipeline)
-        candidate_scores.append((candidate_name, score,email))
+        individual_scores,total_score = score_resume_with_hf(resume_text, job_description, rubrics, model_pipeline)
+        candidate_scores.append((candidate_name, total_score, individual_scores))
 
     sorted_candidates = sorted(candidate_scores, key=lambda x: x[1], reverse=True)
     for file_path in resume_files:
