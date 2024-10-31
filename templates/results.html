@@ -6,6 +6,7 @@
     <title>Top Candidates</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
+        /* Add your styles here */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -14,14 +15,14 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Full height of the viewport */
+            height: 100vh;
         }
 
         h1 {
@@ -31,33 +32,34 @@
         }
 
         .results-container {
-            flex: 1; /* Allow this to grow and fill available space */
-            overflow-y: auto; /* Enable vertical scrolling */
-            border: 1px solid #bdc3c7; /* Adds a border */
-            border-radius: 4px; /* Rounded corners */
-            margin-bottom: 20px; /* Space below the table */
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
 
         .results-table {
             width: 100%;
-            border-collapse: collapse; /* Ensures borders are combined */
+            border-collapse: collapse;
         }
 
         .results-table th, .results-table td {
-            padding: 10px 12px; /* Adjusted padding */
-            font-size: 12px; /* Adjusted font size */
-            border: 1px solid #bdc3c7; /* Adds borders to cells */
+            padding: 10px 12px;
+            font-size: 12px;
+            border: 1px solid #bdc3c7;
         }
 
         .results-table th {
-            background-color: #3498db; /* Light background for header */
-            position: sticky; /* Make header sticky */
-            top: 0; /* Stick to the top */
-            z-index: 1; /* Ensure it is above other content */
+            background-color: #3498db;
+            color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         .results-table tr:nth-child(even) {
-            background-color: #f2f2f2; /* Optional: zebra striping for rows */
+            background-color: #f2f2f2;
         }
 
         .back-link {
@@ -65,14 +67,14 @@
             text-align: center;
             margin-top: 20px;
             text-decoration: none;
-            color: #fff; /* Link color */
-            background-color: #3498db; /* Background color for button */
-            padding: 10px 15px; /* Padding for button */
-            border-radius: 5px; /* Rounded corners for button */
+            color: #fff;
+            background-color: #3498db;
+            padding: 10px 15px;
+            border-radius: 5px;
         }
 
         .back-link:hover {
-            background-color: #2980b9; /* Darker shade on hover */
+            background-color: #2980b9;
         }
     </style>
 </head>
@@ -84,16 +86,20 @@
                 <thead>
                     <tr>
                         <th>Candidate Name</th>
-                        <th>Score</th>
-                        <th>Email</th>
+                        {% for criterion in top_candidates[0][2].keys() %}
+                            <th>{{ criterion }}</th>
+                        {% endfor %}
+                        <th>Total Weighted Score</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for candidate_name, score, email in top_candidates %}
+                    {% for candidate_name, total_score, individual_scores in top_candidates %}
                         <tr>
                             <td>{{ candidate_name }}</td>
-                            <td>{{ score }}</td>
-                            <td>{{ email }}</td>
+                            {% for criterion, score in individual_scores.items() %}
+                                <td>{{ score }}</td>
+                            {% endfor %}
+                            <td>{{ total_score | round(2)}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
