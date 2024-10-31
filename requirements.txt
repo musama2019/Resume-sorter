@@ -1,4 +1,4 @@
 flask
-langchain_huggingface 
 pyPDF2
 langchain_groq
+gunicorn
