@@ -3,3 +3,4 @@ pyPDF2
 langchain_groq
 gunicorn
 pandas
+openpyxl
