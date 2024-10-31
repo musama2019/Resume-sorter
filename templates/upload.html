@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Scoring App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Resume Scoring App</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="resume_files">Upload Resumes (ZIP):</label>
+                <input type="file" name="resume_files" accept=".zip" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="job_description">Upload Job Description (PDF):</label>
+                <input type="file" name="job_description" accept=".pdf" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="rubrics">Upload Rubrics (Excel):</label>
+                <input type="file" name="rubrics" accept=".xlsx" required>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

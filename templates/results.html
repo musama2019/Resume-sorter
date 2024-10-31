@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Candidates</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full height of the viewport */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .results-container {
+            flex: 1; /* Allow this to grow and fill available space */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #bdc3c7; /* Adds a border */
+            border-radius: 4px; /* Rounded corners */
+            margin-bottom: 20px; /* Space below the table */
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse; /* Ensures borders are combined */
+        }
+
+        .results-table th, .results-table td {
+            padding: 10px 12px; /* Adjusted padding */
+            font-size: 12px; /* Adjusted font size */
+            border: 1px solid #bdc3c7; /* Adds borders to cells */
+        }
+
+        .results-table th {
+            background-color: #3498db; /* Light background for header */
+            position: sticky; /* Make header sticky */
+            top: 0; /* Stick to the top */
+            z-index: 1; /* Ensure it is above other content */
+        }
+
+        .results-table tr:nth-child(even) {
+            background-color: #f2f2f2; /* Optional: zebra striping for rows */
+        }
+
+        .back-link {
+            display: inline-block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #fff; /* Link color */
+            background-color: #3498db; /* Background color for button */
+            padding: 10px 15px; /* Padding for button */
+            border-radius: 5px; /* Rounded corners for button */
+        }
+
+        .back-link:hover {
+            background-color: #2980b9; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Top Candidates</h1>
+        <div class="results-container">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Candidate Name</th>
+                        <th>Score</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate_name, score, email in top_candidates %}
+                        <tr>
+                            <td>{{ candidate_name }}</td>
+                            <td>{{ score }}</td>
+                            <td>{{ email }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/" class="back-link">Go Back</a>
+    </div>
+</body>
+</html>
