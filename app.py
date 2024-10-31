@@ -4,8 +4,6 @@ import re
 import pandas as pd
 import PyPDF2
 from flask import Flask, request, render_template, redirect, url_for
-from transformers import pipeline
-from langchain_huggingface import HuggingFaceEndpoint
 from langchain_groq import ChatGroq
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
