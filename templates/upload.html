@@ -3,71 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Sorter</title>
+    <title>Resume Scoring App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
-    <style>
-        /* Basic styling for the upload form */
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        /* Status display and progress bar */
-        .status-container {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: #f8f8f8;
-            position: relative;
-        }
-
-        #status-text {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .progress-bar-container {
-            height: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        #progress-bar {
-            width: 0;
-            height: 100%;
-            background-color: #4caf50;
-            transition: width 0.3s;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Upload Resumes</h1>
-        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <h1>Resume Scoring App</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="resume_files">Upload Resumes (ZIP):</label>
                 <input type="file" name="resume_files" accept=".zip" required>
             </div>
-
+            
             <div class="form-group">
                 <label for="job_description">Upload Job Description (PDF):</label>
                 <input type="file" name="job_description" accept=".pdf" required>
             </div>
-
+            
             <div class="form-group">
                 <label for="rubrics">Upload Rubrics (Excel):</label>
                 <input type="file" name="rubrics" accept=".xlsx" required>
@@ -75,72 +27,6 @@
 
             <button type="submit">Submit</button>
         </form>
-
-        <!-- Status display container -->
-        <div class="status-container">
-            <div id="status-text">Waiting for processing...</div>
-            <div class="progress-bar-container">
-                <div id="progress-bar"></div>
-            </div>
-        </div>
     </div>
-
-    <script>
-        const form = document.getElementById('upload-form');
-        const statusText = document.getElementById('status-text');
-        const progressBar = document.getElementById('progress-bar');
-
-        form.addEventListener('submit', (event) => {
-            event.preventDefault(); // Prevent default form submission
-            const formData = new FormData(form);
-
-            // Update status and progress bar at start
-            statusText.innerText = 'Processing resumes...';
-            progressBar.style.width = '20%'; // Start with some progress
-
-            fetch('/upload', {
-                method: 'POST',
-                body: formData,
-            }).then(response => {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder("utf-8");
-                let progressStep = 20; // Set an increment step for each process update
-
-                const readStream = () => {
-                    reader.read().then(({ done, value }) => {
-                        if (done) {
-                            statusText.innerText = 'Processing complete!';
-                            progressBar.style.width = '100%'; // Complete the bar
-
-                            // Redirect after a short delay
-                            setTimeout(() => {
-                                window.location.href = '/results'; // Redirect to results page
-                            }, 1000); // Wait 2 seconds before redirecting
-
-                            return;
-                        }
-
-                        // Decode and set status with only the last line of output
-                        const result = decoder.decode(value, { stream: true });
-                        const lastLine = result.trim().split('\n').pop(); // Get only the last line of output
-                        statusText.innerText = lastLine; // Update status with the new result
-
-                        // Incrementally update the progress bar width
-                        progressStep = Math.min(progressStep + 20, 100);
-                        progressBar.style.width = `${progressStep}%`;
-
-                        // Continue reading the stream
-                        readStream();
-                    });
-                };
-
-                readStream();
-            }).catch(err => {
-                console.error('Error:', err);
-                statusText.innerText = 'Error processing resumes.';
-                progressBar.style.backgroundColor = '#ff4d4d'; // Red color for errors
-            });
-        });
-    </script>
 </body>
 </html>
